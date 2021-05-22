@@ -1,0 +1,18 @@
+$color-bg-main: #ffffff
+$color-bg-sub: #fafafa
+$color-primary: #75D2FA
+$color-primary-lighten: lighten($color-primary, 15%)
+$color-secondary: #F2EFEB
+$color-accent: #F0A1E2
+$color-text-main: #3B3A39
+$color-text-sub: #BEBCBA
+$color-text-light: #fafafa
+$header-height: 64px
+$form-height: 96px
+$root-font-size: 16px
+
+$breakpoints: ('sm': 'screen and (max-width: 500px)','md': 'screen and (max-width: 760px)','lg': 'screen and (max-width: 1000px)', 'xl': 'screen and (max-width: 1200px)') !default
+
+@mixin mq($breakpoint: md)
+    @media #{map-get($breakpoints, $breakpoint)}
+        @content
