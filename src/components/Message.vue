@@ -1,13 +1,32 @@
 <template>
   <div>
-      <div class="container">
-          <img class="icon" :src="icon" />
+      <div class="container" :class="{container__isMine: isMine}">
+          <img v-if="!isMine" class="icon" :src="icon" />
           <!-- <img class="icon" v-bind:src="icon"/> -->
           <div class="content">
-              <span class="displayName">{{ displayName }}</span>
-              <div class="card">{{ content }}</div>
+
+            <div v-show="showChips" class="chips"
+            @mouseover="isMouseOnChips  =  true"
+            @mouseleave="isMouseOnChips = false"
+            >
+              <button @click="$emit('editMessage')">
+                <mdicon name="pencil" />
+              </button>
+              <button @click="$emit('deleteMessage')">
+                <mdicon name="delete" />
+              </button>
+            </div>
+
+              <span v-if="!isMine" class="displayName">{{ displayName }}</span>
+              <div class="card"
+              :class="{card__isMine: isMine}"
+              @mouseover="isMouseOnCard = true"
+              @mouseleave="isMouseOnCard = false"
+              >
+              {{ content }}
+              </div>
           </div>
-          <div class="timestamp">
+          <div class="timestamp" :class="{timestamp__isMine: isMine}">
               <span>{{ date }}</span>
           </div>
       </div>
@@ -17,21 +36,28 @@
 <script>
 export default {
     name: 'Message',
-    data() {
-        return{
-            content:
-                '山路を登りながら、こう考えた。智に働けば角が立つ。情に棹させば流される。意地を通せば窮屈だ。とかくに人の世は住みにくい。住みにくさが高じると、安い所へ引き越したくなる。どこへ越しても住みにくいと悟った時、詩が生れて、画が出来る。',
-            displayName: 'Taro Tanaka',
-            timestamp: new Date(Date.now()),
-            icon: 'https://gyazo.com/2d0ced47431388015ad62926f5106fc6.png',
-            isMine: false,
-        }
+    data(){
+      return {
+      isMouseOnChips: false,
+      isMouseOnCard: false
+      }
+    },
+    props: {
+      id: String,
+      content: String,
+      displayName: String,
+      timestamp: Object,
+      icon: String,
+      isMine: Boolean
     },
     computed: {
         date(){
             return this.timestamp.toLocaleString()
+        },
+        showChips() {
+          return (this.isMouseOnChips || this.isMouseOnCard) && this.isMine
         }
-    }
+    },
 }
 </script>
 

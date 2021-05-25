@@ -1,15 +1,32 @@
 <template>
-  <Chat />
+  <div v-if="Object.keys(user).length===0" class="login">
+    <h1>SkillupChat</h1>
+    <button @click="login">ログイン</button>
+  </div>
+  <Chat v-else :user="user"/>
 </template>
 
 <script>
 import Chat from '@/views/Chat.vue'
+import {login} from '@/firebase/init.js'
+
 export default {
   name: "App",
   components: {
     Chat
   },
-};
+  data() {
+    return {
+      user: {}
+    }
+  },
+  methods: {
+    async login() {
+      const result = await login()
+      this.user = result.user
+    }
+  }
+}
 </script>
 
 <style lang="sass" scoped>
