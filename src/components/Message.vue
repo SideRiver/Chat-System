@@ -1,63 +1,66 @@
+/* eslint-disable prettier/prettier */
 <template>
   <div>
-      <div class="container" :class="{container__isMine: isMine}">
-          <img v-if="!isMine" class="icon" :src="icon" />
-          <!-- <img class="icon" v-bind:src="icon"/> -->
-          <div class="content">
+    <div class="container" :class="{ container__isMine: isMine }">
+      <img v-if="!isMine" class="icon" :src="icon" />
+      <!-- <img class="icon" v-bind:src="icon"/> -->
+      <div class="content">
+        <div
+          v-show="showChips"
+          class="chips"
+          @mouseover="isMouseOnChips = true"
+          @mouseleave="isMouseOnChips = false"
+        >
+          <button @click="$emit('editMessage')">
+            <mdicon name="pencil" />
+          </button>
+          <button @click="$emit('deleteMessage')">
+            <mdicon name="delete" />
+          </button>
+        </div>
 
-            <div v-show="showChips" class="chips"
-            @mouseover="isMouseOnChips  =  true"
-            @mouseleave="isMouseOnChips = false"
-            >
-              <button @click="$emit('editMessage')">
-                <mdicon name="pencil" />
-              </button>
-              <button @click="$emit('deleteMessage')">
-                <mdicon name="delete" />
-              </button>
-            </div>
-
-              <span v-if="!isMine" class="displayName">{{ displayName }}</span>
-              <div class="card"
-              :class="{card__isMine: isMine}"
-              @mouseover="isMouseOnCard = true"
-              @mouseleave="isMouseOnCard = false"
-              >
-              {{ content }}
-              </div>
-          </div>
-          <div class="timestamp" :class="{timestamp__isMine: isMine}">
-              <span>{{ date }}</span>
-          </div>
+        <span v-if="!isMine" class="displayName">{{ displayName }}</span>
+        <div
+          class="card"
+          :class="{ card__isMine: isMine }"
+          @mouseover="isMouseOnCard = true"
+          @mouseleave="isMouseOnCard = false"
+        >
+          {{ content }}
+        </div>
       </div>
+      <div class="timestamp" :class="{ timestamp__isMine: isMine }">
+        <span>{{ date }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-    name: 'Message',
-    data(){
-      return {
+  name: 'Message',
+  data() {
+    return {
       isMouseOnChips: false,
-      isMouseOnCard: false
-      }
+      isMouseOnCard: false,
+    }
+  },
+  props: {
+    id: String,
+    content: String,
+    displayName: String,
+    timestamp: Object,
+    icon: String,
+    isMine: Boolean,
+  },
+  computed: {
+    date() {
+      return this.timestamp.toLocaleString()
     },
-    props: {
-      id: String,
-      content: String,
-      displayName: String,
-      timestamp: Object,
-      icon: String,
-      isMine: Boolean
+    showChips() {
+      return (this.isMouseOnChips || this.isMouseOnCard) && this.isMine
     },
-    computed: {
-        date(){
-            return this.timestamp.toLocaleString()
-        },
-        showChips() {
-          return (this.isMouseOnChips || this.isMouseOnCard) && this.isMine
-        }
-    },
+  },
 }
 </script>
 

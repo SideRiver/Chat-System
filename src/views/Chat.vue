@@ -1,12 +1,12 @@
 <template>
   <div class="wrapper">
-      <header class="header">
-          <h1>Skillup Chat</h1>
-      </header>
-      <div class="message">
-        <div class="message__container" ref="container">
-          <transition-group name="message" tag="div">
-            <Message
+    <header class="header">
+      <h1>Skillup Chat</h1>
+    </header>
+    <div class="message">
+      <div class="message__container" ref="container">
+        <transition-group name="message" tag="div">
+          <Message
             class="message__component"
             v-for="message in messages"
             :key="message.id"
@@ -18,26 +18,31 @@
             @editMessage="editMessage(message.id)"
             @deleteMessage="deleteMessage(message.id)"
           />
-          </transition-group>
-        </div>
+        </transition-group>
       </div>
-      <div class="form">
-        <div class="form__container">
-          <textarea
+    </div>
+    <div class="form">
+      <div class="form__container">
+        <textarea
           class="form__textarea"
           v-model="inputText"
           plaseholder="メッセージを入力"
           @keyup="keyup"
-          />
-          <button class="form__submit" @click="submit">送信する</button>
-        </div>
+        />
+        <button class="form__submit" @click="submit">送信する</button>
       </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Message from '@/components/Message.vue'
-import {postMessage, deleteMessage, updateMessage, setMessageListener} from '@/firebase/api.js'
+import {
+  postMessage,
+  deleteMessage,
+  updateMessage,
+  setMessageListener,
+} from '@/firebase/api.js'
 
 export default {
   name: 'Chat',
@@ -57,64 +62,64 @@ export default {
   },
   methods: {
     submit() {
-      if(this.inputText === '') return
-      if(this.isEditMode) {
+      if (this.inputText === '') return
+      if (this.isEditMode) {
         updateMessage(this.editTarget, this.inputText)
         this.isEditMode = false
         this.editTarget = ''
-      } else{
-      postMessage(this.user, this.inputText)
+      } else {
+        postMessage(this.user, this.inputText)
       }
       this.inputText = ''
     },
     added(message) {
-    this.checkSender(message)
-    this.messages.push(message)
-    this.$nextTick(() => {
-    const elm = this.$refs.container
-    window.scrollTo({
-      top: elm.clientHeight,
-      left: 0,
-      behavior: 'smooth',
+      this.checkSender(message)
+      this.messages.push(message)
+      this.$nextTick(() => {
+        const elm = this.$refs.container
+        window.scrollTo({
+          top: elm.clientHeight,
+          left: 0,
+          behavior: 'smooth',
+        })
       })
-    })
-  },
-  modified(message){
-    this.checkSender(message)
-    const idx = this.messages.findIndex((e)=>e.id===message.id)
-    this.messages.splice(idx, 1, message)
-  },
-  removed(id){
-    const idx = this.messages.findIndex((e)=>e.id===id)
-    this.messages.splice(idx, 1)
-  },
-  checkSender(message){
-    if(message.uid === this.user.uid){
-      message.isMine = true
-    } else {
-      message.isMine = false
+    },
+    modified(message) {
+      this.checkSender(message)
+      const idx = this.messages.findIndex((e) => e.id === message.id)
+      this.messages.splice(idx, 1, message)
+    },
+    removed(id) {
+      const idx = this.messages.findIndex((e) => e.id === id)
+      this.messages.splice(idx, 1)
+    },
+    checkSender(message) {
+      if (message.uid === this.user.uid) {
+        message.isMine = true
+      } else {
+        message.isMine = false
       }
     },
-    keyup(e){
-      if((e.keyCode === 13 && e.ctrlKey) || (e.keyCode === 13 && e.metaKey)) {
+    keyup(e) {
+      if ((e.keyCode === 13 && e.ctrlKey) || (e.keyCode === 13 && e.metaKey)) {
         this.submit()
       }
     },
-    deleteMessage(id){
+    deleteMessage(id) {
       deleteMessage(id)
     },
-    editMessage(id){
+    editMessage(id) {
       this.isEditMode = true
       this.editTarget = id
-      const content = this.messages.find((e)=>{
+      const content = this.messages.find((e) => {
         return e.id === id
       }).content
       this.inputText = content
-    }
+    },
   },
   created() {
     setMessageListener(this.added, this.modified, this.removed)
-  }
+  },
 }
 </script>
 
